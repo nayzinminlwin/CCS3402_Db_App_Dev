@@ -16,8 +16,7 @@ import java.sql.SQLException;
 
 public class PrimaryController {
 
-    private static final String INSERT_SQL =
-            "INSERT INTO registered_users (full_name, email, phone_num, address_line, pwd) VALUES (?, ?, ?, ?, ?)";
+    private static final String INSERT_SQL = "INSERT INTO java_registered_users (name, email, phone, address, password) VALUES (?, ?, ?, ?, ?)";
 
     @FXML
     private ImageView headerIcon;
