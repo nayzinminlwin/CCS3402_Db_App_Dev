@@ -24,8 +24,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+/**
+ * Main Swing registration form and submission handler.
+ */
 public class PrimaryController extends JFrame {
 
+    // SQL statement used to insert one user record.
     private static final String INSERT_SQL = "INSERT INTO java_registered_users (name, email, phone, address, password) VALUES (?, ?, ?, ?, ?)";
 
     private final JLabel headerIcon = new JLabel();
@@ -42,6 +46,7 @@ public class PrimaryController extends JFrame {
         loadHeaderIcon();
     }
 
+    // Loads the header icon from the resources folder.
     private void loadHeaderIcon() {
         URL iconUrl = getClass().getResource("/image/new_user_icon.png");
         if (iconUrl != null) {
@@ -49,15 +54,18 @@ public class PrimaryController extends JFrame {
         }
     }
 
+    // Builds the registration window layout and wires button events.
     private void buildUi() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
+        // Thin colored strip at the top for visual emphasis.
         JPanel top = new JPanel(new BorderLayout());
         top.setBackground(new Color(38, 70, 83));
         top.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         add(top, BorderLayout.NORTH);
 
+        // Main form container uses GridBagLayout for aligned rows.
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBorder(BorderFactory.createEmptyBorder(18, 24, 18, 24));
         GridBagConstraints gbc = new GridBagConstraints();
@@ -65,6 +73,7 @@ public class PrimaryController extends JFrame {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
+        // Header row: icon + title text.
         JLabel title = new JLabel("Register");
         title.setFont(new Font("Segoe UI", Font.BOLD, 24));
         title.setHorizontalAlignment(SwingConstants.LEFT);
@@ -76,6 +85,7 @@ public class PrimaryController extends JFrame {
         gbc.gridx = 1;
         formPanel.add(title, gbc);
 
+        // Input rows for user registration details.
         addRow(formPanel, gbc, 1, "Name", nameField);
         addRow(formPanel, gbc, 2, "Email", emailField);
         addRow(formPanel, gbc, 3, "Phone", phoneField);
@@ -83,6 +93,7 @@ public class PrimaryController extends JFrame {
         addRow(formPanel, gbc, 5, "Password", passwordField);
         addRow(formPanel, gbc, 6, "Confirm password", confirmPasswordField);
 
+        // Action buttons for submit and close.
         JPanel buttonPanel = new JPanel();
         JButton registerButton = new JButton("Register");
         registerButton.addActionListener(this::onRegister);
@@ -99,12 +110,14 @@ public class PrimaryController extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         formPanel.add(buttonPanel, gbc);
 
+        // Final window sizing and placement.
         add(formPanel, BorderLayout.CENTER);
         pack();
         setLocationRelativeTo(null);
         setResizable(false);
     }
 
+    // Utility helper to add one label-input row to the form grid.
     private static void addRow(JPanel panel, GridBagConstraints gbc, int row, String labelText, JTextField input) {
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.EAST;
@@ -119,6 +132,7 @@ public class PrimaryController extends JFrame {
         panel.add(input, gbc);
     }
 
+    // Validates form values and writes a new user record to Oracle.
     private void onRegister(ActionEvent ignored) {
         String name = trimOrEmpty(nameField.getText());
         String email = trimOrEmpty(emailField.getText());
@@ -128,18 +142,21 @@ public class PrimaryController extends JFrame {
         String confirm = confirmPasswordField.getPassword() != null ? new String(confirmPasswordField.getPassword())
                 : "";
 
+        // Basic required-field validation.
         if (name.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty()
                 || password.isEmpty() || confirm.isEmpty()) {
             showAlert(JOptionPane.WARNING_MESSAGE, "Missing data", "Please fill in every field.");
             return;
         }
 
+        // Ensure password and confirmation match.
         if (!password.equals(confirm)) {
             showAlert(JOptionPane.WARNING_MESSAGE, "Password mismatch",
                     "Password and Confirm password must match.");
             return;
         }
 
+        // Stop early when placeholder DB credentials are still present.
         if (isPlaceholderConfig()) {
             showAlert(JOptionPane.WARNING_MESSAGE, "Database not configured",
                     "Set JDBC_URL, USERNAME, and PASSWORD in DatabaseConfig.java to your Oracle credentials.");
@@ -166,24 +183,29 @@ public class PrimaryController extends JFrame {
         }
     }
 
+    // Closes the form window.
     private void onCancel() {
         dispose();
     }
 
+    // Normalizes nullable inputs to trimmed strings.
     private static String trimOrEmpty(String s) {
         return s == null ? "" : s.trim();
     }
 
+    // Detects unconfigured placeholder credentials.
     private static boolean isPlaceholderConfig() {
         return DatabaseConfig.JDBC_URL.contains("YOUR_HOST")
                 || DatabaseConfig.USERNAME.contains("YOUR_ORACLE_USERNAME")
                 || DatabaseConfig.PASSWORD.contains("YOUR_ORACLE_PASSWORD");
     }
 
+    // Shows a simple dialog message.
     private void showAlert(int messageType, String title, String message) {
         JOptionPane.showMessageDialog(this, message, title, messageType);
     }
 
+    // Clears all form fields after successful save.
     private void clearForm() {
         nameField.setText("");
         emailField.setText("");
