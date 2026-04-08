@@ -1,12 +1,9 @@
 package me.alex;
 
-import java.io.IOException;
-import javafx.fxml.FXML;
-
 public class SecondaryController {
 
-    @FXML
-    private void switchToPrimary() throws IOException {
-        App.setRoot("primary");
+    public void showPrimaryForm() {
+        PrimaryController form = new PrimaryController();
+        form.setVisible(true);
     }
 }

@@ -1,74 +1,147 @@
 package me.alex;
 
-import javafx.application.Platform;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class PrimaryController {
+public class PrimaryController extends JFrame {
 
     private static final String INSERT_SQL = "INSERT INTO java_registered_users (name, email, phone, address, password) VALUES (?, ?, ?, ?, ?)";
 
-    @FXML
-    private ImageView headerIcon;
+    private final JLabel headerIcon = new JLabel();
+    private final JTextField nameField = new JTextField(25);
+    private final JTextField emailField = new JTextField(25);
+    private final JTextField phoneField = new JTextField(25);
+    private final JTextField addressField = new JTextField(25);
+    private final JPasswordField passwordField = new JPasswordField(25);
+    private final JPasswordField confirmPasswordField = new JPasswordField(25);
 
-    @FXML
-    private TextField nameField;
+    public PrimaryController() {
+        super("Create a new account");
+        buildUi();
+        loadHeaderIcon();
+    }
 
-    @FXML
-    private TextField emailField;
-
-    @FXML
-    private TextField phoneField;
-
-    @FXML
-    private TextField addressField;
-
-    @FXML
-    private PasswordField passwordField;
-
-    @FXML
-    private PasswordField confirmPasswordField;
-
-    public void initialize() {
+    private void loadHeaderIcon() {
         URL iconUrl = getClass().getResource("/image/new_user_icon.png");
         if (iconUrl != null) {
-            headerIcon.setImage(new Image(iconUrl.toExternalForm(), true));
+            headerIcon.setIcon(new ImageIcon(iconUrl));
         }
     }
 
-    @FXML
-    private void onRegister() {
+    private void buildUi() {
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        JPanel top = new JPanel(new BorderLayout());
+        top.setBackground(new Color(38, 70, 83));
+        top.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        add(top, BorderLayout.NORTH);
+
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setBorder(BorderFactory.createEmptyBorder(18, 24, 18, 24));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        JLabel title = new JLabel("Register");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        title.setHorizontalAlignment(SwingConstants.LEFT);
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        formPanel.add(headerIcon, gbc);
+
+        gbc.gridx = 1;
+        formPanel.add(title, gbc);
+
+        addRow(formPanel, gbc, 1, "Name", nameField);
+        addRow(formPanel, gbc, 2, "Email", emailField);
+        addRow(formPanel, gbc, 3, "Phone", phoneField);
+        addRow(formPanel, gbc, 4, "Address", addressField);
+        addRow(formPanel, gbc, 5, "Password", passwordField);
+        addRow(formPanel, gbc, 6, "Confirm password", confirmPasswordField);
+
+        JPanel buttonPanel = new JPanel();
+        JButton registerButton = new JButton("Register");
+        registerButton.addActionListener(this::onRegister);
+
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(e -> onCancel());
+
+        buttonPanel.add(registerButton);
+        buttonPanel.add(cancelButton);
+
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        formPanel.add(buttonPanel, gbc);
+
+        add(formPanel, BorderLayout.CENTER);
+        pack();
+        setLocationRelativeTo(null);
+        setResizable(false);
+    }
+
+    private static void addRow(JPanel panel, GridBagConstraints gbc, int row, String labelText, JTextField input) {
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0.0;
+        panel.add(new JLabel(labelText), gbc);
+
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        panel.add(input, gbc);
+    }
+
+    private void onRegister(ActionEvent ignored) {
         String name = trimOrEmpty(nameField.getText());
         String email = trimOrEmpty(emailField.getText());
         String phone = trimOrEmpty(phoneField.getText());
         String address = trimOrEmpty(addressField.getText());
-        String password = passwordField.getText() != null ? passwordField.getText() : "";
-        String confirm = confirmPasswordField.getText() != null ? confirmPasswordField.getText() : "";
+        String password = passwordField.getPassword() != null ? new String(passwordField.getPassword()) : "";
+        String confirm = confirmPasswordField.getPassword() != null ? new String(confirmPasswordField.getPassword())
+                : "";
 
         if (name.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty()
                 || password.isEmpty() || confirm.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Missing data", "Please fill in every field.");
+            showAlert(JOptionPane.WARNING_MESSAGE, "Missing data", "Please fill in every field.");
             return;
         }
 
         if (!password.equals(confirm)) {
-            showAlert(Alert.AlertType.WARNING, "Password mismatch",
+            showAlert(JOptionPane.WARNING_MESSAGE, "Password mismatch",
                     "Password and Confirm password must match.");
             return;
         }
 
         if (isPlaceholderConfig()) {
-            showAlert(Alert.AlertType.WARNING, "Database not configured",
+            showAlert(JOptionPane.WARNING_MESSAGE, "Database not configured",
                     "Set JDBC_URL, USERNAME, and PASSWORD in DatabaseConfig.java to your Oracle credentials.");
             return;
         }
@@ -83,19 +156,18 @@ public class PrimaryController {
             ps.setString(5, password);
             int rows = ps.executeUpdate();
             if (rows == 1) {
-                showAlert(Alert.AlertType.INFORMATION, "Success", "User registered successfully.");
+                showAlert(JOptionPane.INFORMATION_MESSAGE, "Success", "User registered successfully.");
                 clearForm();
             }
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Database error",
+            showAlert(JOptionPane.ERROR_MESSAGE, "Database error",
                     "Could not save the user. Check your Oracle URL, credentials, and that the table exists.\n\n"
                             + e.getMessage());
         }
     }
 
-    @FXML
     private void onCancel() {
-        Platform.exit();
+        dispose();
     }
 
     private static String trimOrEmpty(String s) {
@@ -108,20 +180,16 @@ public class PrimaryController {
                 || DatabaseConfig.PASSWORD.contains("YOUR_ORACLE_PASSWORD");
     }
 
-    private static void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    private void showAlert(int messageType, String title, String message) {
+        JOptionPane.showMessageDialog(this, message, title, messageType);
     }
 
     private void clearForm() {
-        nameField.clear();
-        emailField.clear();
-        phoneField.clear();
-        addressField.clear();
-        passwordField.clear();
-        confirmPasswordField.clear();
+        nameField.setText("");
+        emailField.setText("");
+        phoneField.setText("");
+        addressField.setText("");
+        passwordField.setText("");
+        confirmPasswordField.setText("");
     }
 }
