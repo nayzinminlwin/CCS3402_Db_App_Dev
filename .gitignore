@@ -1,0 +1,23 @@
+# Node dependencies
+**/node_modules/
+
+# Maven / Java build output
+**/target/
+*.class
+
+# Logs and runtime files
+*.log
+*.pid
+*.pid.lock
+*.seed
+*.out
+*.err
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode/
+.idea/
+*.iml
