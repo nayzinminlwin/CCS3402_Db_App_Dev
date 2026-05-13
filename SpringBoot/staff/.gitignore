@@ -1,0 +1,68 @@
+# .gitignore for a Maven Spring Boot project
+
+# Compiled class files
+*.class
+
+# Logs
+*.log
+logs/
+
+# Build output
+/target/
+/build/
+
+# Maven Wrapper - ignore wrapper dir but keep the jar tracked
+.mvn/wrapper/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Package files
+*.jar
+*.war
+*.ear
+
+# Maven specific
+dependency-reduced-pom.xml
+release.properties
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+
+# IDEs and editors
+# STS / Eclipse
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/.nb-gradle/
+
+# VS Code
+.vscode/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Temp files
+*.tmp
+*.swp
+*~
+
+# Others
+dependency/ # local dependency folder if used
+
