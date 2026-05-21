@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Staff Management</title>
+  </head>
+  <body>
+    <h1>Staff Management</h1>
+    <p>Welcome to the Staff Management Application!</p>
+    <ul>
+      <li><a href="/staff/list" th:href="@{/staff/list}">Staff List</a></li>
+      <li><a href="/staff/signup" th:href="@{/staff/signup}">New Staff</a></li>
+      <li>
+        <a href="/staff/update" th:href="@{/staff/update}">Update Staff</a>
+      </li>
+      <li>
+        <a href="/staff/delete" th:href="@{/staff/delete}">Delete Staff</a>
+      </li>
+    </ul>
+  </body>
+</html>

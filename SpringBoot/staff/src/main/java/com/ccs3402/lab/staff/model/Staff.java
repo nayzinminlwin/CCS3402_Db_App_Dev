@@ -39,6 +39,19 @@ public class Staff {
         return salary;
     }
 
+    // Bean-style convenience accessors to match template property names
+    public Integer getId() {
+        return this.staffid;
+    }
+
+    public String getFirstName() {
+        return this.fname;
+    }
+
+    public String getLastName() {
+        return this.lname;
+    }
+
     public void setStaffid(Integer staffid) {
         this.staffid = staffid;
     }
@@ -53,6 +66,18 @@ public class Staff {
 
     public void setSalary(Integer salary) {
         this.salary = salary;
+    }
+
+    public void setId(Integer id) {
+        this.staffid = id;
+    }
+
+    public void setFirstName(String firstName) {
+        this.fname = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lname = lastName;
     }
 
     @Override
