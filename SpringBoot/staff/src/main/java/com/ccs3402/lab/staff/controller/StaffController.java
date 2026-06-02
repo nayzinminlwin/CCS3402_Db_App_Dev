@@ -6,6 +6,7 @@ import com.ccs3402.lab.staff.model.Staff;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.validation.BindingResult;
@@ -38,6 +39,15 @@ public class StaffController {
         }
         staffRepository.save(staff);
         return "redirect:/staff/list";
+    }
+
+    @GetMapping("update")
+    public String showUpdateForm(@PathVariable("id") long id, Model model) {
+        Staff staff = staffRepository.findById((int) id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid staff Id:" + id));
+        model.addAttribute("staff", staff);
+        // departments list not available in this module
+        return "update-staff";
     }
 
 }
