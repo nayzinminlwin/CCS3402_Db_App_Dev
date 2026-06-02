@@ -8,7 +8,7 @@ public class Staff {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "staffid")
+    @Column(name = "staff_id")
     private Integer staffid;
 
     @Column(name = "fname")
@@ -19,6 +19,10 @@ public class Staff {
 
     @Column(name = "salary")
     private Integer salary;
+
+    @ManyToOne
+    @JoinColumn(name = "dept_id")
+    private Department department;
 
     public Staff() {
     }
@@ -37,6 +41,10 @@ public class Staff {
 
     public Integer getSalary() {
         return salary;
+    }
+
+    public Department getDepartment() {
+        return department;
     }
 
     // Bean-style convenience accessors to match template property names
@@ -66,6 +74,10 @@ public class Staff {
 
     public void setSalary(Integer salary) {
         this.salary = salary;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     public void setId(Integer id) {
